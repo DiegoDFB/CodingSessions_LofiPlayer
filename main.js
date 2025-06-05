@@ -6,7 +6,11 @@ const createWindow = () => {
     height: 750,
     autoHideMenuBar: true,
     icon: __dirname + '/icon.ico',
-    maximizable: false
+    maximizable: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
   })
 
   win.loadFile('index.html')

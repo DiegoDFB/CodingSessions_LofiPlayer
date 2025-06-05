@@ -1,13 +1,42 @@
-const image = document.getElementById("cover"),
-    title = document.getElementById("title"),
-    artist = document.getElementById("artist"),
+const image = document.getElementsByClassName("cover"),
+    title = document.getElementsByClassName("title"),
+    artist = document.getElementsByClassName("artist"),
     prevButton = document.getElementById("prevButton"),
     nextButton = document.getElementById("nextButton"),
     progress = document.getElementById("progress"),
     ctrlIcon = document.getElementById("ctrlIcon"),
     playButton = document.getElementById("playButton"),
-    durationTime = document.getElementById("durationTime"),
-    elapsedTime = document.getElementById("elapsedTime");
+    durationTime = document.getElementsByClassName("durationTime"),
+    elapsedTime = document.getElementsByClassName("elapsedTime"),
+    menuButton = document.getElementById("menuButton"),
+    songList = document.getElementById("songListBox"),
+    bottomNav = document.getElementById("bottom-nav"),
+    songInfoBox = document.getElementById("songInfoBox");
+
+
+    const path = require('path');
+    const fs = require('fs');
+
+    let songs = [];
+    
+    function fetchSongData() {
+        const songsPath = path.join(__dirname, 'songs.json');
+        
+        fs.readFile(songsPath, 'utf8', (err, data) => {
+            if (err) {
+                console.error("Error reading file:", err);
+                return;
+            }
+            songs = JSON.parse(data);
+            console.log("Songs loaded:", songs);
+            
+            // Initialize the player with the first song
+            if (songs.length > 0) {
+                loadMusic(songs[0]);
+            }
+        });
+    }
+
 
 const music = new Audio();
 
@@ -23,45 +52,6 @@ music.onloadedmetadata = function(){
     progress.value = music.currentTime;
     durationTime.textContent = formatTime(music.duration);
 }
-
-const songs = [
-    {
-        path: "assets/C4CHello.mp3",
-        displayName: 'Hello (feat. kokoro)',
-        cover: 'assets/C4CHello.jpg',
-        artist: 'C4C',
-    },
-    {
-        path: "assets/ptrLittleThings.mp3",
-        displayName: 'Little Things',
-        cover: 'assets/ptrLittleThings.jpg',
-        artist: 'Ptr.',
-    },
-    {
-        path: "assets/deebuKinou.mp3",
-        displayName: 'Kinou',
-        cover: 'assets/deebuKinou.jpg',
-        artist: 'Deebu',
-    },
-    {
-        path: "assets/sharou223.mp3",
-        displayName: '2:23 AM',
-        cover: 'assets/sharou223.jpg',
-        artist: 'しゃろう',
-    },
-    {
-        path: "assets/sharou303.mp3",
-        displayName: '3:03 PM',
-        cover: 'assets/sharou303.jpg',
-        artist: 'しゃろう',
-    },
-    {
-        path: "assets/reoNeonIroNoMachi.mp3",
-        displayName: 'ネオン色のまち',
-        cover: 'assets/reoNeonIroNoMachi.jpg',
-        artist: 'Reo',
-    }
-];
 
 let musicIndex = 0;
 let isPlaying = false;
@@ -91,25 +81,35 @@ function pauseMusic(){
     music.pause();
 }
 
-function loadMusic(song){
-    music.src = song.path;
-    title.textContent = song.displayName;
-    artist.textContent = song.artist;
-    image.src = song.cover;
+function loadMusic(song) {
+    music.src = path.join(__dirname, song.path);
+    title[0].textContent = song.displayName;
+    title[1].textContent = song.displayName;
+    artist[0].textContent = song.artist;
+    artist[1].textContent = song.artist;
+    image[0].src = path.join(__dirname, song.cover);
+    image[1].src = path.join(__dirname, song.cover);
+    
+    music.currentTime = 0;
+    if (isPlaying) music.play();
 }
 
-function changeMusic(direction){
+function changeMusic(direction) {
+    if (songs.length === 0) return;
+    
     musicIndex = (musicIndex + direction + songs.length) % songs.length;
     loadMusic(songs[musicIndex]);
     playMusic();
 }
+
+console.log("Script loaded!");
+fetchSongData();
 
 playButton.addEventListener('click', togglePlay);
 prevButton.addEventListener('click', () => changeMusic(-1));
 nextButton.addEventListener('click', () => changeMusic(1));
 music.addEventListener('ended', () => changeMusic(1));
 
-loadMusic(songs[musicIndex]);
 pauseMusic();
 
 let isProgressClicked = false;
@@ -128,6 +128,23 @@ music.addEventListener('timeupdate', function() {
     elapsedTime.textContent = formatTime(music.currentTime);
 });
 
+menuButton.addEventListener('click', function() {
+    hideSongInfo();
+})
+
+bottomNav.addEventListener('click', function() {
+    hideSongInfo();
+})
+
+function hideSongInfo(){
+    if(songInfoBox.classList.contains('hide')){
+        songInfoBox.classList.remove('hide');
+    }
+    else{
+        songInfoBox.classList.add('hide');
+    }
+}
+
 setInterval(() => {
     if (!isProgressClicked) {
         progress.value = music.currentTime;
@@ -142,7 +159,6 @@ progress.onchange = function(){
 const volumeSlider = document.getElementById('volumeSlider');
 const volumeIcon = document.querySelector('.volume-control i');
 
-// Set initial volume
 music.volume = volumeSlider.value;
 
 const savedVolume = localStorage.getItem('volume');
@@ -151,12 +167,10 @@ if (savedVolume) {
     volumeSlider.value = savedVolume;
 }
 
-// Update volume when slider changes
 volumeSlider.addEventListener('input', function() {
     localStorage.setItem('volume', this.value);
     music.volume = this.value;
     
-    // Update volume icon based on volume level
     if (this.value == 0) {
         volumeIcon.classList.replace('fa-volume-high', 'fa-volume-off');
     } else if (this.value < 0.5) {
@@ -168,7 +182,6 @@ volumeSlider.addEventListener('input', function() {
     }
 });
 
-// Toggle mute when clicking the icon
 volumeIcon.addEventListener('click', function() {
     if (music.volume > 0) {
         volumeSlider.value = 0;

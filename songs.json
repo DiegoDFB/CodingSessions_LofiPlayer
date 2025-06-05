@@ -1,0 +1,38 @@
+[
+    {
+        "path": "assets/C4CHello.mp3",
+        "displayName": "Hello (feat. kokoro)",
+        "cover": "assets/C4CHello.jpg",
+        "artist": "C4C"
+    },
+    {
+        "path": "assets/ptrLittleThings.mp3",
+        "displayName": "Little Things",
+        "cover": "assets/ptrLittleThings.jpg",
+        "artist": "Ptr."
+    },
+    {
+        "path": "assets/deebuKinou.mp3",
+        "displayName": "Kinou",
+        "cover": "assets/deebuKinou.jpg",
+        "artist": "Deebu"
+    },
+    {
+        "path": "assets/sharou223.mp3",
+        "displayName": "2:23 AM",
+        "cover": "assets/sharou223.jpg",
+        "artist": "しゃろう"
+    },
+    {
+        "path": "assets/sharou303.mp3",
+        "displayName": "3:03 PM",
+        "cover": "assets/sharou303.jpg",
+        "artist": "しゃろう"
+    },
+    {
+        "path": "assets/reoNeonIroNoMachi.mp3",
+        "displayName": "ネオン色のまち",
+        "cover": "assets/reoNeonIroNoMachi.jpg",
+        "artist": "Reo"
+    }
+]

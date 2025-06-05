@@ -2,7 +2,6 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; style-src 'self' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com"
@@ -17,19 +16,16 @@
   </head>
   <body>
     <div class="container">
-        <div class="music-player">
+        <div class="music-player" id="songInfoBox">
             <nav>
-                <div class="circle">
-                    <i class="fa-solid fa-angle-left"></i>
-                </div>
-                <div class="circle">
-                    <i class="fa-solid fa-bars"></i>
+                <div class="circle" id="menuButton">
+                    <i class="fa-solid fa-angle-down"></i>
                 </div>
             </nav>
-            <img src="" class="song-img" id="cover">
+            <img src="" class="song-img cover">
             <div class="songInfo">
-                <h1 id="title"></h1>
-                <p id="artist"></p>
+                <h1 class="title" id="title"></h1>
+                <p class="artist" id="artist"></p>
             </div>
 
             <audio id="song">
@@ -59,6 +55,16 @@
                 <input type="range" min="0" max="1" step="0.01" value="1" id="volumeSlider">
             </div>
 
+        </div>
+        <div class="songList" id="songListBox">
+            <nav class="bottom-nav" id="bottom-nav">
+                <img src="" class="song-img-mini cover">
+                <div class="songInfo-mini">
+                    <h1 class="title" id="title-mini"></h1>
+                    <p class="artist" id="artist-mini"></p>
+                    <div class="rotate"></div>
+                </div>
+            </nav>
         </div>
     </div>
 
