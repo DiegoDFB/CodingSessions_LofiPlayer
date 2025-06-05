@@ -5,13 +5,16 @@ const image = document.getElementsByClassName("cover"),
     nextButton = document.getElementById("nextButton"),
     progress = document.getElementById("progress"),
     ctrlIcon = document.getElementById("ctrlIcon"),
+    ctrlIconMini = document.getElementById("ctrlIcon-mini"),
     playButton = document.getElementById("playButton"),
-    durationTime = document.getElementsByClassName("durationTime"),
-    elapsedTime = document.getElementsByClassName("elapsedTime"),
+    durationTime = document.getElementById("durationTime"),
+    elapsedTime = document.getElementById("elapsedTime"),
     menuButton = document.getElementById("menuButton"),
-    songList = document.getElementById("songListBox"),
     bottomNav = document.getElementById("bottom-nav"),
-    songInfoBox = document.getElementById("songInfoBox");
+    songInfoBox = document.getElementById("songInfoBox"),
+    playButtonMini = document.getElementById("playButton-mini"),
+    prevButtonMini = document.getElementById("prevButton-mini"),
+    nextButtonMini = document.getElementById("nextButton-mini");
 
 
     const path = require('path');
@@ -20,7 +23,7 @@ const image = document.getElementsByClassName("cover"),
     let songs = [];
     
     function fetchSongData() {
-        const songsPath = path.join(__dirname, 'songs.json');
+        const songsPath = path.join(__dirname, '..', 'assets', 'songs.json');
         
         fs.readFile(songsPath, 'utf8', (err, data) => {
             if (err) {
@@ -30,7 +33,6 @@ const image = document.getElementsByClassName("cover"),
             songs = JSON.parse(data);
             console.log("Songs loaded:", songs);
             
-            // Initialize the player with the first song
             if (songs.length > 0) {
                 loadMusic(songs[0]);
             }
@@ -69,6 +71,7 @@ function playMusic(){
     isPlaying = true;
 
     ctrlIcon.classList.replace('fa-play', 'fa-pause');
+    ctrlIconMini.classList.replace('fa-play', 'fa-pause');
     ctrlIcon.setAttribute('title', 'pause');
     music.play();
 }
@@ -77,6 +80,7 @@ function pauseMusic(){
     isPlaying = false;
 
     ctrlIcon.classList.replace('fa-pause', 'fa-play');
+    ctrlIconMini.classList.replace('fa-pause', 'fa-play');
     ctrlIcon.setAttribute('title', 'play');
     music.pause();
 }
@@ -108,6 +112,9 @@ fetchSongData();
 playButton.addEventListener('click', togglePlay);
 prevButton.addEventListener('click', () => changeMusic(-1));
 nextButton.addEventListener('click', () => changeMusic(1));
+playButtonMini.addEventListener('click', togglePlay);
+prevButtonMini.addEventListener('click', () => changeMusic(-1));
+nextButtonMini.addEventListener('click', () => changeMusic(1));
 music.addEventListener('ended', () => changeMusic(1));
 
 pauseMusic();
@@ -132,9 +139,14 @@ menuButton.addEventListener('click', function() {
     hideSongInfo();
 })
 
-bottomNav.addEventListener('click', function() {
-    hideSongInfo();
-})
+bottomNav.addEventListener('click', function(event) {
+    // Verifica se o clique NÃO foi em um dos botões ou em seus elementos filhos
+    const isButtonClick = event.target.closest('#prevButton-mini, #playButton-mini, #nextButton-mini');
+    
+    if (!isButtonClick) {
+        hideSongInfo();
+    }
+});
 
 function hideSongInfo(){
     if(songInfoBox.classList.contains('hide')){
@@ -194,3 +206,75 @@ volumeIcon.addEventListener('click', function() {
         volumeIcon.classList.replace('fa-volume-off', 'fa-volume-high');
     }
 });
+
+function renderPlaylist(songs) {
+    const playlistContainer = document.getElementById('playlistContainer');
+    playlistContainer.innerHTML = ''; // Limpa a lista antes de recarregar
+
+    songs.forEach((song, index) => {
+        const songElement = document.createElement('div');
+        songElement.className = `playlist-item ${index === musicIndex ? 'active' : ''}`;
+        
+        // Corrige o caminho da imagem
+        let coverPath;
+        coverPath = song.cover;
+
+        songElement.innerHTML = `
+            <img src="${coverPath}" alt="Capa" onerror="this.onerror=null;this.src='../assets/placeholder.jpg'">
+            <div class="playlist-item-info">
+                <h3>${song.displayName}</h3>
+                <p>${song.artist}</p>
+            </div>
+        `;
+
+        songElement.addEventListener('click', () => {
+            musicIndex = index;
+            loadMusic(songs[musicIndex]);
+            playMusic();
+            highlightActiveSong();
+        });
+
+        playlistContainer.appendChild(songElement);
+    });
+}
+
+// Função para destacar a música atual
+function highlightActiveSong() {
+    const items = document.querySelectorAll('.playlist-item');
+    items.forEach((item, index) => {
+        item.classList.toggle('active', index === musicIndex);
+    });
+}
+
+// Chame esta função após carregar as músicas:
+function fetchSongData() {
+    return new Promise((resolve, reject) => {
+        const songsPath = path.join(__dirname, '..', 'assets', 'songs.json');
+        
+        fs.readFile(songsPath, 'utf8', (err, data) => {
+            if (err) {
+                console.error("Error reading file:", err);
+                reject(err);
+                return;
+            }
+            songs = JSON.parse(data);
+            console.log("Songs loaded:", songs);
+            
+            if (songs.length > 0) {
+                loadMusic(songs[0]);
+            }
+            resolve(songs);
+        });
+    });
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await fetchSongData();
+        renderPlaylist(songs);
+    } catch (error) {
+        console.error("Failed to load songs:", error);
+    }
+});
+
+music.addEventListener('play', highlightActiveSong);

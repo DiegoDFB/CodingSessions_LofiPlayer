@@ -1,11 +1,12 @@
 const { app, BrowserWindow } = require('electron')
 
 const createWindow = () => {
+  const path = require('path');
   const win = new BrowserWindow({
     width: 400,
     height: 750,
     autoHideMenuBar: true,
-    icon: __dirname + '/icon.ico',
+    icon: path.join(__dirname, '../assets/icon.ico'),
     maximizable: false,
     webPreferences: {
       nodeIntegration: true,
@@ -13,7 +14,7 @@ const createWindow = () => {
     }
   })
 
-  win.loadFile('index.html')
+  win.loadFile('./renderer/index.html')
 }
 
 app.whenReady().then(() => {

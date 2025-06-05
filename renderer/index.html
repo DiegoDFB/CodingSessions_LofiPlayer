@@ -11,12 +11,12 @@
       content="default-src 'self'; script-src 'self'; style-src 'self' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com"
     />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="./css/styles.css">
+    <link rel="stylesheet" type="text/css" href="../css/styles.css">
     <title>Coding Session</title>
   </head>
   <body>
     <div class="container">
-        <div class="music-player" id="songInfoBox">
+        <div class="music-player hide" id="songInfoBox">
             <nav>
                 <div class="circle" id="menuButton">
                     <i class="fa-solid fa-angle-down"></i>
@@ -29,7 +29,7 @@
             </div>
 
             <audio id="song">
-                <source src="assets/blackGold.mp3" type="audio/mpeg">
+                <source src="" type="audio/mpeg">
             </audio>
 
             <div class="time">
@@ -57,18 +57,29 @@
 
         </div>
         <div class="songList" id="songListBox">
+            <div class="playlist" id="playlistContainer"></div>
             <nav class="bottom-nav" id="bottom-nav">
                 <img src="" class="song-img-mini cover">
                 <div class="songInfo-mini">
                     <h1 class="title" id="title-mini"></h1>
                     <p class="artist" id="artist-mini"></p>
-                    <div class="rotate"></div>
+                    <div class="mini-button-area">
+                        <div id="prevButton-mini">
+                            <i class="fa-solid fa-backward"></i>
+                        </div>
+                        <div id="playButton-mini">
+                            <i class="fa-solid fa-play" id="ctrlIcon-mini"></i>
+                        </div>
+                        <div id="nextButton-mini">
+                            <i class="fa-solid fa-forward"></i>
+                        </div>
+                    </div>
                 </div>
             </nav>
         </div>
     </div>
 
-    <script src="./js/script.js"></script>
+    <script src="../js/script.js"></script>
 
 </body>
 </html>
